@@ -15,7 +15,12 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      default: "",
+    },
+
+    googleId: {
+      type: String,
+      default: "",
     },
   },
   {
@@ -23,4 +28,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model(
+  "User",
+  userSchema
+);
