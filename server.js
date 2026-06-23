@@ -16,17 +16,25 @@ app.use("/api/cart", require("./routes/cartRoutes"));
 
 // TEST ROUTE
 app.get("/", (req, res) => {
-  res.send("Backend Running...");
+  res.json({ message: "Backend Running..." });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/lumora")
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("DB Error:", err));
+// MongoDB Connection Function
+const connectDB = async () => {
+  try {
+    await mongoose.connect(
+      process.env.MONGO_URI || "mongodb://127.0.0.1:27017/lumora"
+    );
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.log("DB Error:", err);
+  }
+};
 
-// SERVER
-const PORT = process.env.PORT || 5000;
+// Connect DB once
+connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+
+// EXPORT APP FOR VERCEL
+module.exports = app;
