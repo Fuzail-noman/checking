@@ -35,9 +35,16 @@ async function connectToMongoDB() {
   }
 }
 
-connectToMongoDB();
 
+ connectToMongoDB();
 
+// app.use((req , res ,next ) =>{
+//   if(!isConnected){
+//     connectToMongoDB();
+
+//   }
+//   next()
+// })
 
 // EXPORT APP FOR VERCEL
 module.exports = app;
