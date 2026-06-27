@@ -45,6 +45,6 @@ async function connectToMongoDB() {
 //   }
 //   next()
 // })
-
+console.log(process.env.MONGO_URI);
 // EXPORT APP FOR VERCEL
 module.exports = app;
