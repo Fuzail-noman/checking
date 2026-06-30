@@ -9,6 +9,41 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let isConnected = false;
+
+// MongoDB Connection
+async function connectToMongoDB() {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "your_database_name", // Agar URI me database name hai to is line ko hata do
+    });
+
+    isConnected = true;
+    console.log("✅ Connected to MongoDB");
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error);
+    throw error;
+  }
+}
+connectToMongoDB();
+// Connect before every request
+app.use(async (req, res, next) => {
+  try {
+    if (!isConnected) {
+      await connectToMongoDB();
+    }
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: error.message,
+    });
+  }
+});
+
 // ROUTES
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
@@ -19,31 +54,5 @@ app.get("/", (req, res) => {
   res.json({ message: "Backend Running..." });
 });
 
-
-let isConnected = false;
-
-async function connectToMongoDB() {
-  if (isConnected) return;
-
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-
-    isConnected = true;
-    console.log("Connected to MongoDB");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-  }
-}
-
-
-
-app.use((req , res ,next ) =>{
-  if(!isConnected){
-    connectToMongoDB();
-
-  }
-  next()
-})
-console.log(process.env.MONGO_URI );
 // EXPORT APP FOR VERCEL
 module.exports = app;
